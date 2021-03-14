@@ -1,7 +1,14 @@
 #!/bin/bash
-set -e
-set -u
-#set -x
+# Exit on error. Append "|| true" if you expect an error.
+set -o errexit
+# Exit on error inside any function or subshells.
+set -o errtrace
+# Do not allow use of undefined vars. Use ${VAR:-} to use an undefined VAR.
+set -o nounset
+# Catch the error in case cmd1 fails (but cmd2 succeeds) in  `cmd1 | cmd2 `.
+set -o pipefail
+# Turn on traces, useful while debugging but commentend out by default
+# set -o xtrace
 ############
 # Variables
 
