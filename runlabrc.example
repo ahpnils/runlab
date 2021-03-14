@@ -1,0 +1,17 @@
+#!/bin/bash
+# Runlab configuration file.
+# Used by runlab - https://github.com/ahpnils/runlab
+# You should copy this file in /etc/runlabrc and modify the default values
+# as they will certainly not apply to your setup !
+
+# net_list provides the list of libvirt's virtual networks
+net_list="
+examplenet
+"
+
+# dom_list provides the list of libvirt's domains, aka virtual machines
+dom_list="
+examplevm
+"
+
+# vim:ts=2:sw=2

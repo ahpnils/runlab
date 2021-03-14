@@ -12,45 +12,6 @@ set -o pipefail
 ############
 # Variables
 
-# TODO : use a config file for network and domain lists
-#net_list="isp5net isp6net"
-#dom_list="isp5box isp6box"
-
-net_list="
-dmz-website
-isp1-isp2
-isp1-isp3
-isp1net
-isp2-isp4
-isp2-isp5
-isp2-website
-isp3-workstation
-isp4-isp6
-isp4net
-isp5-isp6
-isp5net
-isp6net
-lan-website
-lan-workstation
-"
-
-dom_list="
-router0-isp1
-dns0-isp1
-router0-isp4
-router0-isp2
-router0-isp3
-router0-isp5
-router0-isp6
-fwl0-website
-fwl0-workstation
-isp5box
-isp6box
-vhost-website
-website-workstation
-workstation
-dvwa-website
-"
 
 ############
 # Functions
@@ -117,6 +78,14 @@ virsh_domain() {
 
 if [[ ${#} -eq 0 ]]; then
 	usage
+fi
+
+conf_file="/etc/runlabrc"
+if [ -r "${conf_file}" ]; then
+	# shellcheck source=./runlabrc.example
+	source ${conf_file}
+else
+	die "CRITICAL : config file not found. Ensure you have a ${conf_file} ."
 fi
 
 optstring=":skh"
