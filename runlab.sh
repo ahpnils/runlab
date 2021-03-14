@@ -69,6 +69,10 @@ virsh_domain() {
 ############
 # Main
 
+if [ "$(id -u)" != "0" ]; then
+	die "CRITICAL : not run as root."
+fi
+
 if [[ ${#} -eq 0 ]]; then
 	usage
 fi
