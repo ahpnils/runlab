@@ -61,13 +61,6 @@ virsh_domain() {
 	  die "Unknown action."
   fi
 
-	# TODO : wait for all the domain to be
-	# shut down before return.
-	# TODO2 : if the domain is still on after X seconds,
-	# assume it is an issue and kill it or stop the script
-	# and warn the admin.
-	# TODO3 : try to start the domains in an order and shut
-	# them in the reverse order.
   for virt_dom in ${dom_list}; do
 	  /usr/bin/virsh ${dom_arg} "${virt_dom}"
   done
