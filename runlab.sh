@@ -12,6 +12,7 @@ set -o pipefail
 ############
 # Variables
 
+virsh_bin=$(which virsh)
 
 ############
 # Functions
@@ -37,15 +38,30 @@ usage() {
 # in order to start or stop a virtual network
 virsh_net() {
   if [ "${action}" == "start" ]; then
-	  net_arg="net-start"
+		net_arg="net-start"
+		wanted_active="yes"
   elif [ "${action}" == "stop" ]; then
-	  net_arg="net-destroy"
+		net_arg="net-destroy"
+		wanted_active="no"
   else
 	  die "Unknown action."
   fi
 
   for virt_net in ${net_list}; do
 	  /usr/bin/virsh ${net_arg} "${virt_net}"
+		target_active=0
+		for i in {0..10}
+		do
+			sleep $((i * 2))
+			if [ "$(${virsh_bin} net-info "${virt_net}" | grep ^Active | awk '{print $2}')" == "${wanted_active}" ]; then
+				target_active=1
+				break
+			fi
+		done
+		if [ ${target_active} -eq 0 ]; then
+			# just print error or die ?
+			echo "error starting or shuting down ${virt_net}"
+		fi
   done
 }
 
@@ -54,15 +70,30 @@ virsh_net() {
 # in order to start or stop a domain
 virsh_domain() {
   if [ "${action}" == "start" ]; then
-	  dom_arg="start"
+		dom_arg="start"
+		wanted_state="running"
   elif [ "${action}" == "stop" ]; then
-	  dom_arg="shutdown"
+		dom_arg="shutdown"
+		wanted_state="shut off"
   else
 	  die "Unknown action."
   fi
 
   for virt_dom in ${dom_list}; do
 	  /usr/bin/virsh ${dom_arg} "${virt_dom}"
+		target_state=0
+		for i in {0..10}
+		do
+			sleep $((i * 2))
+			if [ "$(${virsh_bin} domstate "${virt_dom}")" == "${wanted_state}" ]; then
+				target_state=1
+				break
+			fi
+		done
+		if [ ${target_state} -eq 0 ]; then
+			# just print error or die ?
+			echo "error starting or shuting down ${virt_dom}"
+		fi
   done
 }
 
