@@ -43,6 +43,7 @@ virsh_net() {
   elif [ "${action}" == "stop" ]; then
 		net_arg="net-destroy"
 		wanted_active="no"
+		net_list=$(echo "${net_list}" | tac -)
   else
 	  die "Unknown action."
   fi
@@ -75,6 +76,7 @@ virsh_domain() {
   elif [ "${action}" == "stop" ]; then
 		dom_arg="shutdown"
 		wanted_state="shut off"
+		dom_list=$(echo "${dom_list}" | tac -)
   else
 	  die "Unknown action."
   fi
