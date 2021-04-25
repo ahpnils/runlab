@@ -12,7 +12,21 @@ set -o pipefail
 ############
 # Variables
 
-virsh_bin=$(which virsh)
+#virsh_bin="/usr/bin/virsh"
+virsh_bin="$(which virsh)"
+conf_file="/etc/runlabrc"
+
+############
+# Sanity checks
+
+if [ -r "${conf_file}" ]; then
+	# shellcheck source=./runlabrc.example
+	source ${conf_file}
+else
+	echo "CRITICAL : config file not found. Ensure you have a ${conf_file} ." 2>&1
+	echo "Quitting..." 2>&1
+	exit 1
+fi
 
 ############
 # Functions
@@ -49,12 +63,12 @@ virsh_net() {
   fi
 
   for virt_net in ${net_list}; do
-	  "${virsh_bin}" ${net_arg} "${virt_net}"
+	  "${virsh_bin}" -c "${libvirt_uri}" ${net_arg} "${virt_net}"
 		target_active=0
 		for i in {0..10}
 		do
 			sleep $((i * 2))
-			if [ "$(${virsh_bin} net-info "${virt_net}" | grep ^Active | awk '{print $2}')" == "${wanted_active}" ]; then
+			if [ "$(${virsh_bin} -c "${libvirt_uri}" net-info "${virt_net}" | grep ^Active | awk '{print $2}')" == "${wanted_active}" ]; then
 				target_active=1
 				break
 			fi
@@ -82,12 +96,12 @@ virsh_domain() {
   fi
 
   for virt_dom in ${dom_list}; do
-	  "${virsh_bin}" ${dom_arg} "${virt_dom}"
+	  "${virsh_bin}" -c "${libvirt_uri}" ${dom_arg} "${virt_dom}"
 		target_state=0
 		for i in {0..10}
 		do
 			sleep $((i * 2))
-			if [ "$(${virsh_bin} domstate "${virt_dom}")" == "${wanted_state}" ]; then
+			if [ "$(${virsh_bin} -c "${libvirt_uri}" domstate "${virt_dom}")" == "${wanted_state}" ]; then
 				target_state=1
 				break
 			fi
@@ -102,20 +116,8 @@ virsh_domain() {
 ############
 # Main
 
-if [ "$(id -u)" != "0" ]; then
-	die "CRITICAL : not run as root."
-fi
-
 if [[ ${#} -eq 0 ]]; then
 	usage
-fi
-
-conf_file="/etc/runlabrc"
-if [ -r "${conf_file}" ]; then
-	# shellcheck source=./runlabrc.example
-	source ${conf_file}
-else
-	die "CRITICAL : config file not found. Ensure you have a ${conf_file} ."
 fi
 
 optstring=":skh"

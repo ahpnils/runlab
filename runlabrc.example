@@ -4,6 +4,13 @@
 # You should copy this file in /etc/runlabrc and modify the default values
 # as they will certainly not apply to your setup !
 
+# libvirt_uri is the location of the libvirt hypervisor.
+# the default value is "qemu:///system", which connects
+# to the local host.
+# A remote system can be accessed with the following URI :
+# "qemu+ssh://user@hypervisor/system
+libvirt_uri="qemu:///system"
+
 # net_list provides the list of libvirt's virtual networks
 net_list="
 examplenet
