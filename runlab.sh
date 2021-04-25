@@ -12,7 +12,6 @@ set -o pipefail
 ############
 # Variables
 
-#virsh_bin="/usr/bin/virsh"
 virsh_bin="$(which virsh)"
 conf_file="/etc/runlabrc"
 
