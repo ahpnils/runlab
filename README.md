@@ -12,7 +12,7 @@ Option `-h` shows a very resembling help message.
 ## Configuration file
 
 For now the configuration file location is hardcoded in `/etc/runlabrc`.
-The `runlabrc.example` in this repository is a heavily-documentend version.`
+The `runlabrc.example` in this repository is a heavily-documentend version.
 
 ## License
 
