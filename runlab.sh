@@ -49,7 +49,7 @@ virsh_net() {
   fi
 
   for virt_net in ${net_list}; do
-	  /usr/bin/virsh ${net_arg} "${virt_net}"
+	  "${virsh_bin}" ${net_arg} "${virt_net}"
 		target_active=0
 		for i in {0..10}
 		do
@@ -82,7 +82,7 @@ virsh_domain() {
   fi
 
   for virt_dom in ${dom_list}; do
-	  /usr/bin/virsh ${dom_arg} "${virt_dom}"
+	  "${virsh_bin}" ${dom_arg} "${virt_dom}"
 		target_state=0
 		for i in {0..10}
 		do
