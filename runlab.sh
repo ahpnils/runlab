@@ -27,6 +27,7 @@ else
 	exit 1
 fi
 
+
 ############
 # Functions
 
@@ -44,6 +45,7 @@ usage() {
 	echo "	 -k		stop (kill) the lab"
 	echo "	 -r		restart (stop then start) the lab"
 	echo "	 -h		show this help"
+	echo "Note : only one argument at a time can be used."
 	exit 1
 }
 
@@ -51,10 +53,10 @@ usage() {
 # takes an action as an argument,
 # in order to start or stop a virtual network
 virsh_net() {
-  if [ "${action}" == "start" ]; then
+  if [ "${1}" == "start" ]; then
 		net_arg="net-start"
 		wanted_active="yes"
-  elif [ "${action}" == "stop" ]; then
+  elif [ "${1}" == "stop" ]; then
 		net_arg="net-destroy"
 		wanted_active="no"
 		net_list=$(echo "${net_list}" | tac -)
@@ -84,10 +86,10 @@ virsh_net() {
 # takes an action as an argument,
 # in order to start or stop a domain
 virsh_domain() {
-  if [ "${action}" == "start" ]; then
+  if [ "${1}" == "start" ]; then
 		dom_arg="start"
 		wanted_state="running"
-  elif [ "${action}" == "stop" ]; then
+  elif [ "${1}" == "stop" ]; then
 		dom_arg="shutdown"
 		wanted_state="shut off"
 		dom_list=$(echo "${dom_list}" | tac -)
@@ -116,33 +118,21 @@ virsh_domain() {
 ############
 # Main
 
-if [[ ${#} -eq 0 ]]; then
-	usage
+if [[ ${#} != 1 ]]; then
+  usage
 fi
 
 optstring=":skrh"
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
-			echo "Starting the lab"
 			action="start"
-			virsh_net "${action}"
-			virsh_domain "${action}"
 			;;
 		k)
-			echo "Stopping the lab"
 			action="stop"
-			virsh_domain "${action}"
-			virsh_net "${action}"
 			;;
 	  r)
-			echo "Restarting the lab"
-			action="stop"
-			virsh_domain "${action}"
-			virsh_net "${action}"
-			action="start"
-			virsh_net "${action}"
-			virsh_domain "${action}"
+			action="restart"
 			;;
 		h)
 			usage
@@ -154,5 +144,28 @@ while getopts ${optstring} arg; do
 			;;
 	esac
 done
+
+case "${action}" in
+	start)
+		echo "Starting the lab"
+		virsh_net "${action}"
+		virsh_domain "${action}"
+		;;
+	stop)
+		echo "Stopping the lab"
+		virsh_domain "${action}"
+		virsh_net "${action}"
+		;;
+	restart)
+		echo "Restarting the lab"
+		virsh_domain stop
+		virsh_net stop
+		virsh_net start
+		virsh_domain start
+		;;
+	*)
+		echo "Invalid action: -${action}."
+		;;
+esac
 
 # vim:ts=2:sw=2
