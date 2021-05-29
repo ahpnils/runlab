@@ -14,6 +14,7 @@ set -o pipefail
 
 virsh_bin="$(which virsh)"
 conf_file="/etc/runlabrc"
+action=""
 
 ############
 # Sanity checks
@@ -118,21 +119,17 @@ virsh_domain() {
 ############
 # Main
 
-if [[ ${#} != 1 ]]; then
-  usage
-fi
-
 optstring=":skrh"
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
-			action="start"
+			if [ -z ${action} ]; then action="start"; else usage; fi
 			;;
 		k)
-			action="stop"
+			if [ -z ${action} ]; then action="stop"; else usage; fi
 			;;
 	  r)
-			action="restart"
+			if [ -z ${action} ]; then action="restart"; else usage; fi
 			;;
 		h)
 			usage
