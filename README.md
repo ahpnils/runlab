@@ -4,11 +4,11 @@
 
 ## Usage
 
-Usage : `./runlab.sh [-skrch]`.
-Option `-s` starts the lab.
-Option `-k` stops (kills) the lab.
-Option `-r` restarts (stops then starts) the lab
-Option `-c` specifies the config file (defaults to /etc/runlabrc)
+Usage : `./runlab.sh [-skrch]`.  
+Option `-s` starts the lab.  
+Option `-k` stops (kills) the lab.  
+Option `-r` restarts (stops then starts) the lab.  
+Option `-c` specifies the config file (defaults to /etc/runlabrc).  
 Option `-h` shows a very resembling help message.
 
 ## Configuration file
