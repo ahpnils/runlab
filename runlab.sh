@@ -42,6 +42,7 @@ usage() {
 	echo "Usage: $(basename "${0}") [-skh]" 2>&1
 	echo "	 -s		start the lab"
 	echo "	 -k		stop (kill) the lab"
+	echo "	 -r		restart (stop then start) the lab"
 	echo "	 -h		show this help"
 	exit 1
 }
@@ -119,7 +120,7 @@ if [[ ${#} -eq 0 ]]; then
 	usage
 fi
 
-optstring=":skh"
+optstring=":skrh"
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
@@ -133,6 +134,15 @@ while getopts ${optstring} arg; do
 			action="stop"
 			virsh_domain "${action}"
 			virsh_net "${action}"
+			;;
+	  r)
+			echo "Restarting the lab"
+			action="stop"
+			virsh_domain "${action}"
+			virsh_net "${action}"
+			action="start"
+			virsh_net "${action}"
+			virsh_domain "${action}"
 			;;
 		h)
 			usage
