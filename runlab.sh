@@ -13,7 +13,8 @@ set -o pipefail
 # Variables
 
 virsh_bin="$(which virsh)"
-conf_file="/etc/runlabrc"
+default_conf_file="/etc/runlabrc"
+conf_file="${default_conf_file}"
 
 ############
 # Sanity checks
@@ -43,6 +44,7 @@ usage() {
 	echo "	 -s		start the lab"
 	echo "	 -k		stop (kill) the lab"
 	echo "	 -r		restart (stop then start) the lab"
+	echo "	 -c 	define config file (optional - defaults to /etc/runlabrc)"
 	echo "	 -h		show this help"
 	exit 1
 }
@@ -120,7 +122,7 @@ if [[ ${#} -eq 0 ]]; then
 	usage
 fi
 
-optstring=":skrh"
+optstring=":skrch"
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
@@ -143,6 +145,9 @@ while getopts ${optstring} arg; do
 			action="start"
 			virsh_net "${action}"
 			virsh_domain "${action}"
+		c)
+			param=$2
+			${conf_file}=$param
 			;;
 		h)
 			usage
