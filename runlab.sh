@@ -46,7 +46,7 @@ die() {
 
 # Explains how the script works
 usage() {
-	echo "Usage: $(basename "${0}") [-skh]" 2>&1
+	echo "Usage: $(basename "${0}") [-skrch]" 2>&1
 	echo "	 -s		start the lab"
 	echo "	 -k		stop (kill) the lab"
 	echo "	 -r		restart (stop then start) the lab"
@@ -153,10 +153,16 @@ while getopts ${optstring} arg; do
 			action="start"
 			virsh_net "${action}"
 			virsh_domain "${action}"
+			;;
 		c)
+<<<<<<< HEAD
 			param=$2
 			${conf_file}=$param
 >>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
+=======
+			conf_file="$2"
+			echo "Using config file ${conf_file}"
+>>>>>>> d6f2209 (Adds echo on the config used)
 			;;
 		h)
 			usage
