@@ -8,26 +8,13 @@ set -o nounset
 # Catch the error in case cmd1 fails (but cmd2 succeeds) in  `cmd1 | cmd2 `.
 set -o pipefail
 # Turn on traces, useful while debugging but commentend out by default
-# set -o xtrace
+set -o xtrace
 ############
 # Variables
 
 virsh_bin="$(which virsh)"
-default_conf_file="/etc/runlabrc"
-conf_file="${default_conf_file}"
-
-############
-# Sanity checks
-
-if [ -r "${conf_file}" ]; then
-	# shellcheck source=./runlabrc.example
-	source ${conf_file}
-else
-	echo "CRITICAL : config file not found. Ensure you have a ${conf_file} ." 2>&1
-	echo "Quitting..." 2>&1
-	exit 1
-fi
-
+conf_file="/etc/runlabrc"
+action=""
 
 ############
 # Functions
@@ -45,8 +32,8 @@ usage() {
 	echo "	 -s		start the lab"
 	echo "	 -k		stop (kill) the lab"
 	echo "	 -r		restart (stop then start) the lab"
-	echo "	 -c 	define config file (optional - defaults to /etc/runlabrc)"
 	echo "	 -h		show this help"
+	echo "   -c   define config file (optional - defaults to /etc/runlabrc)"
 	echo "Note : only one argument at a time can be used."
 	exit 1
 }
@@ -120,11 +107,7 @@ virsh_domain() {
 ############
 # Main
 
-if [[ ${#} -eq 0 ]]; then
-	usage
-fi
-
-optstring=":skrch"
+optstring=":c:skrh"
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
@@ -134,20 +117,18 @@ while getopts ${optstring} arg; do
 			if [ -z ${action} ]; then action="stop"; else usage; fi
 			;;
 	  r)
-			echo "Restarting the lab"
-			action="stop"
-			virsh_domain "${action}"
-			virsh_net "${action}"
-			action="start"
-			virsh_net "${action}"
-			virsh_domain "${action}"
+			if [ -z ${action} ]; then action="restart"; else usage; fi
+			;;
 		c)
-			param=$2
-			${conf_file}=$param
+			echo "Config file ${OPTARG} used."
+			conf_file="${OPTARG}"
 			;;
 		h)
 			usage
 			;;
+		:)
+			die "Option -${OPTARG} requires an argument."
+			;; 
 		?)
 			echo "Invalid option: -${OPTARG}."
 			echo
@@ -155,6 +136,16 @@ while getopts ${optstring} arg; do
 			;;
 	esac
 done
+
+# Take options from config file
+if [ -r "${conf_file}" ]; then
+	# shellcheck source=./runlabrc.example
+	source ${conf_file}
+else
+	echo "CRITICAL : config file not found. Ensure you have a ${conf_file} ." 2>&1
+	echo "Quitting..." 2>&1
+	exit 1
+fi
 
 case "${action}" in
 	start)
