@@ -13,18 +13,8 @@ set -o pipefail
 # Variables
 
 virsh_bin="$(which virsh)"
-<<<<<<< HEAD
-<<<<<<< HEAD
-conf_file="/etc/runlabrc"
-action=""
-=======
 default_conf_file="/etc/runlabrc"
 conf_file="${default_conf_file}"
->>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
-=======
-default_conf_file="/etc/runlabrc"
-conf_file="${default_conf_file}"
->>>>>>> d6f2209e248e2f8c89545e971543172ac7c24a02
 
 ############
 # Sanity checks
@@ -51,7 +41,7 @@ die() {
 
 # Explains how the script works
 usage() {
-	echo "Usage: $(basename "${0}") [-skrch]" 2>&1
+	echo "Usage: $(basename "${0}") [-skh]" 2>&1
 	echo "	 -s		start the lab"
 	echo "	 -k		stop (kill) the lab"
 	echo "	 -r		restart (stop then start) the lab"
@@ -130,18 +120,11 @@ virsh_domain() {
 ############
 # Main
 
-<<<<<<< HEAD
-optstring=":skrh"
-=======
 if [[ ${#} -eq 0 ]]; then
 	usage
 fi
 
 optstring=":skrch"
-<<<<<<< HEAD
->>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
-=======
->>>>>>> d6f2209e248e2f8c89545e971543172ac7c24a02
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
@@ -151,9 +134,6 @@ while getopts ${optstring} arg; do
 			if [ -z ${action} ]; then action="stop"; else usage; fi
 			;;
 	  r)
-<<<<<<< HEAD
-			if [ -z ${action} ]; then action="restart"; else usage; fi
-=======
 			echo "Restarting the lab"
 			action="stop"
 			virsh_domain "${action}"
@@ -161,21 +141,9 @@ while getopts ${optstring} arg; do
 			action="start"
 			virsh_net "${action}"
 			virsh_domain "${action}"
-			;;
 		c)
-<<<<<<< HEAD
-<<<<<<< HEAD
 			param=$2
 			${conf_file}=$param
->>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
-=======
-			conf_file="$2"
-			echo "Using config file ${conf_file}"
->>>>>>> d6f2209 (Adds echo on the config used)
-=======
-			conf_file="$2"
-			echo "Using config file ${conf_file}"
->>>>>>> d6f2209e248e2f8c89545e971543172ac7c24a02
 			;;
 		h)
 			usage
