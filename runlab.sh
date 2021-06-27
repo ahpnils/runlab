@@ -14,12 +14,17 @@ set -o pipefail
 
 virsh_bin="$(which virsh)"
 <<<<<<< HEAD
+<<<<<<< HEAD
 conf_file="/etc/runlabrc"
 action=""
 =======
 default_conf_file="/etc/runlabrc"
 conf_file="${default_conf_file}"
 >>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
+=======
+default_conf_file="/etc/runlabrc"
+conf_file="${default_conf_file}"
+>>>>>>> d6f2209e248e2f8c89545e971543172ac7c24a02
 
 ############
 # Sanity checks
@@ -133,7 +138,10 @@ if [[ ${#} -eq 0 ]]; then
 fi
 
 optstring=":skrch"
+<<<<<<< HEAD
 >>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
+=======
+>>>>>>> d6f2209e248e2f8c89545e971543172ac7c24a02
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
@@ -156,6 +164,7 @@ while getopts ${optstring} arg; do
 			;;
 		c)
 <<<<<<< HEAD
+<<<<<<< HEAD
 			param=$2
 			${conf_file}=$param
 >>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
@@ -163,6 +172,10 @@ while getopts ${optstring} arg; do
 			conf_file="$2"
 			echo "Using config file ${conf_file}"
 >>>>>>> d6f2209 (Adds echo on the config used)
+=======
+			conf_file="$2"
+			echo "Using config file ${conf_file}"
+>>>>>>> d6f2209e248e2f8c89545e971543172ac7c24a02
 			;;
 		h)
 			usage
