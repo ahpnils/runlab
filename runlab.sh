@@ -13,8 +13,13 @@ set -o pipefail
 # Variables
 
 virsh_bin="$(which virsh)"
+<<<<<<< HEAD
 conf_file="/etc/runlabrc"
 action=""
+=======
+default_conf_file="/etc/runlabrc"
+conf_file="${default_conf_file}"
+>>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
 
 ############
 # Sanity checks
@@ -45,6 +50,7 @@ usage() {
 	echo "	 -s		start the lab"
 	echo "	 -k		stop (kill) the lab"
 	echo "	 -r		restart (stop then start) the lab"
+	echo "	 -c 	define config file (optional - defaults to /etc/runlabrc)"
 	echo "	 -h		show this help"
 	echo "Note : only one argument at a time can be used."
 	exit 1
@@ -119,7 +125,15 @@ virsh_domain() {
 ############
 # Main
 
+<<<<<<< HEAD
 optstring=":skrh"
+=======
+if [[ ${#} -eq 0 ]]; then
+	usage
+fi
+
+optstring=":skrch"
+>>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
@@ -129,7 +143,20 @@ while getopts ${optstring} arg; do
 			if [ -z ${action} ]; then action="stop"; else usage; fi
 			;;
 	  r)
+<<<<<<< HEAD
 			if [ -z ${action} ]; then action="restart"; else usage; fi
+=======
+			echo "Restarting the lab"
+			action="stop"
+			virsh_domain "${action}"
+			virsh_net "${action}"
+			action="start"
+			virsh_net "${action}"
+			virsh_domain "${action}"
+		c)
+			param=$2
+			${conf_file}=$param
+>>>>>>> 2101be2 (Adding parameter "-c" to resolve issue #5)
 			;;
 		h)
 			usage
