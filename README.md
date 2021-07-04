@@ -2,6 +2,41 @@
 
 `runlab` is a script shell that starts and stops a list of libvirt domains and networks.
 
+
+## Installation
+
+Installation is not mandatory, you can just clone the repository and start the
+script from where you cloned it.
+
+Step 1 : clone the repository
+
+```
+git clone https://github.com/ahpnils/runlab.git
+```
+
+Step 2 : run the installer with root privileges
+
+```
+sudo make install
+```
+
+Step 3 : modify the config file to suit your needs
+
+```
+sudo vim /etc/runlabrc
+```
+
+If you wish to update your existing installation :
+
+```
+make src-update
+sudo make update
+```
+
+Don't forget to have a look at the new `runlabrc.example` if new options
+appeared.
+
+
 ## Usage
 
 Usage : `./runlab.sh [-skrch]`.  
