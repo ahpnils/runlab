@@ -8,7 +8,7 @@ set -o nounset
 # Catch the error in case cmd1 fails (but cmd2 succeeds) in  `cmd1 | cmd2 `.
 set -o pipefail
 # Turn on traces, useful while debugging but commentend out by default
-set -o xtrace
+#set -o xtrace
 ############
 # Variables
 
