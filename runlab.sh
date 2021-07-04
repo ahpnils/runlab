@@ -123,7 +123,7 @@ if [ "${FLOCKER:-}" != "$0" ] ; then
   env FLOCKER="$0" flock -en -E "$LOCK_FAIL_CODE" "$0" "$0" "$@" || ret="$?"
   if [ "${ret:-}" = "$LOCK_FAIL_CODE" ] ; then
     die "Already running."
-	elif [ -z "${ret:-}"] ; then
+	elif [ -z "${ret:-}" ] ; then
 		exit 0
 	else
 		exit "${ret:-}"
