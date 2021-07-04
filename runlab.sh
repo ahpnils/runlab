@@ -105,6 +105,28 @@ virsh_domain() {
 }
 
 ############
+# Mutex
+
+if [ "${FLOCKER:-}" != "$0" ] ; then
+  # re-launching itself with a lock
+  #
+  # -e - exclusive
+  # -n - non-block
+  # -E - --conflict-exit-code
+  # "$0" - lock-file (itself)
+  #
+  # "$0" - programm to launch (itself)
+  # "$@" - with its arguments
+  LOCK_FAIL_CODE=66
+  # Not an exec, as we want to check if it failed because of the lock, or for
+  # an other reason
+  env FLOCKER="$0" flock -en -E "$LOCK_FAIL_CODE" "$0" "$0" "$@" || ret="$?"
+  if [ "${ret:-}" = "$LOCK_FAIL_CODE" ] ; then
+    die "Already running."
+  fi
+fi
+
+############
 # Main
 
 optstring=":c:skrh"
