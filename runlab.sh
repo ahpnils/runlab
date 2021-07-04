@@ -8,26 +8,13 @@ set -o nounset
 # Catch the error in case cmd1 fails (but cmd2 succeeds) in  `cmd1 | cmd2 `.
 set -o pipefail
 # Turn on traces, useful while debugging but commentend out by default
-# set -o xtrace
+#set -o xtrace
 ############
 # Variables
 
 virsh_bin="$(which virsh)"
 conf_file="/etc/runlabrc"
 action=""
-
-############
-# Sanity checks
-
-if [ -r "${conf_file}" ]; then
-	# shellcheck source=./runlabrc.example
-	source ${conf_file}
-else
-	echo "CRITICAL : config file not found. Ensure you have a ${conf_file} ." 2>&1
-	echo "Quitting..." 2>&1
-	exit 1
-fi
-
 
 ############
 # Functions
@@ -46,6 +33,7 @@ usage() {
 	echo "	 -k		stop (kill) the lab"
 	echo "	 -r		restart (stop then start) the lab"
 	echo "	 -h		show this help"
+	echo "   -c   define config file (optional - defaults to /etc/runlabrc)"
 	echo "Note : only one argument at a time can be used."
 	exit 1
 }
@@ -119,7 +107,7 @@ virsh_domain() {
 ############
 # Main
 
-optstring=":skrh"
+optstring=":c:skrh"
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
@@ -131,9 +119,16 @@ while getopts ${optstring} arg; do
 	  r)
 			if [ -z ${action} ]; then action="restart"; else usage; fi
 			;;
+		c)
+			echo "Config file ${OPTARG} used."
+			conf_file="${OPTARG}"
+			;;
 		h)
 			usage
 			;;
+		:)
+			die "Option -${OPTARG} requires an argument."
+			;; 
 		?)
 			echo "Invalid option: -${OPTARG}."
 			echo
@@ -141,6 +136,16 @@ while getopts ${optstring} arg; do
 			;;
 	esac
 done
+
+# Take options from config file
+if [ -r "${conf_file}" ]; then
+	# shellcheck source=./runlabrc.example
+	source ${conf_file}
+else
+	echo "CRITICAL : config file not found. Ensure you have a ${conf_file} ." 2>&1
+	echo "Quitting..." 2>&1
+	exit 1
+fi
 
 case "${action}" in
 	start)
