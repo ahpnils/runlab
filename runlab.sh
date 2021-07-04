@@ -111,13 +111,13 @@ optstring=":c:skrh"
 while getopts ${optstring} arg; do
 	case "${arg}" in
 		s)
-			if [ -z ${action} ]; then action="start"; else usage; fi
+			if [ -z "${action}" ]; then action="start"; else usage; fi
 			;;
 		k)
-			if [ -z ${action} ]; then action="stop"; else usage; fi
+			if [ -z "${action}" ]; then action="stop"; else usage; fi
 			;;
 	  r)
-			if [ -z ${action} ]; then action="restart"; else usage; fi
+			if [ -z "${action}" ]; then action="restart"; else usage; fi
 			;;
 		c)
 			echo "Config file ${OPTARG} used."
@@ -140,7 +140,7 @@ done
 # Take options from config file
 if [ -r "${conf_file}" ]; then
 	# shellcheck source=./runlabrc.example
-	source ${conf_file}
+	source "${conf_file}"
 else
 	echo "CRITICAL : config file not found. Ensure you have a ${conf_file} ." 2>&1
 	echo "Quitting..." 2>&1
