@@ -9,6 +9,7 @@ test:
 	shellcheck -x ./runlab.sh
 gen-man:
 	pandoc ./doc/runlab.1.md -s -t man -o ./man/runlab.1
+	pandoc ./doc/runlabrc.5.md -s -t man -o ./man/runlabrc.5
 install:
 	install -m 755 ./runlab.sh ${PREFIX}/bin/runlab
 	${INSTALL_DATA} ./runlabrc.example ${SYSCONFDIR}/runlabrc
