@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Exit on error. Append "|| true" if you expect an error.                           
+set -o errexit                                                                   
+# Exit on error inside any function or subshells.                                
+set -o errtrace                                                                  
+# Do not allow use of undefined vars. Use ${VAR:-} to use an undefined VAR.         
+set -o nounset                                                                   
+# Catch the error in case cmd1 fails (but cmd2 succeeds) in  `cmd1 | cmd2 `.        
+set -o pipefail                                                                  
+# Turn on traces, useful while debugging but commentend out by default           
+#set -o xtrace
+############                                                                        
+# Variables                                                                         
+
+shellcheck_bin=$(which shellcheck)
+pandoc_bin=$(which pandoc)
+diff_bin=$(which diff)
+work_dir=$(mktemp -d)
+
+############
+# Main
+echo "start pre-commit checks for runlab"
+
+${shellcheck_bin} -x ./runlab.sh && echo "shellcheck test passed."
+
+for manpage in runlab.1 runlabrc.5; do
+	${pandoc_bin} "./doc/${manpage}.md" -s -t man -o "${work_dir}/${manpage}"
+	set +o errexit
+	if ${diff_bin} --brief "./man/${manpage}" "${work_dir}/${manpage}" > /dev/null 2>&1; then
+		echo "man page consistency check for ${manpage} passed"
+	else
+		echo "man page consistency check for ${manpage} FAILED ! Here is the diff :"
+		${diff_bin} -bu --color "./man/${manpage}" "${work_dir}/${manpage}"
+		echo "Please regenerate the manpages using 'make gen-man' or pandoc directly."
+	fi
+	set -o errexit
+done
+
+rm -rf "${work_dir}"
+
+echo "end pre-commit checks for runlab"
+
+# vim:ts=2:sw=2

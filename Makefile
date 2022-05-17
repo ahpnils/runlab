@@ -7,6 +7,10 @@ INSTALL_MAN ?= install -m 644
 
 test:
 	shellcheck -x ./runlab.sh
+	shellcheck -x ./hooks/pre-commit
+configure-hooks:
+	cd .git/hooks
+	ln -s ../../hooks/pre-commit
 gen-man:
 	pandoc ./doc/runlab.1.md -s -t man -o ./man/runlab.1
 	pandoc ./doc/runlabrc.5.md -s -t man -o ./man/runlabrc.5
